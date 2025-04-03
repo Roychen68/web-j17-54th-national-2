@@ -1,0 +1,41 @@
+div#route-map{
+    background: #fff;
+    width: 768px;
+    padding: 9px;
+    z-index: -5;
+    margin: auto;
+    /* transform: translateY(50px); */
+}
+div.station {
+    width: 250px;
+    height: 100px;
+    text-align: center;
+    position: relative;
+}
+
+span.station-point {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background: #34d399;
+    outline: #34d399 2px solid;
+    border: 2px solid #fff;
+    border-radius: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+div.station::before {
+    content: "";
+    width: 250px;
+    height: 5px;
+    background: #34d399;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    z-index: -1;
+}
+
+div.d-flex:first-of-type div.station:first-of-type::before {
+    width: 125px;
+}

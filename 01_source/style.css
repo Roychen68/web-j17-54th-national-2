@@ -1,0 +1,42 @@
+header{
+    width: 100%;
+    height: 100px;
+    display: flex !important;
+    background: white;
+    flex-direction: row;
+    justify-content: space-between;
+}
+div.logo{
+    line-height: 100px;
+    display: flex;
+    cursor: pointer;
+}
+body{
+    font-family: Arial, Helvetica, sans-serif !important;
+    background: #edf7fe !important;
+}
+img.logo{
+    height: 100px;
+}
+header h1{
+    line-height: 100px;
+}
+div.card{
+    width: 80%;
+    max-height: 70%;
+    transform: translateY(150px);
+    margin: auto;
+}
+div.links{
+    line-height: 100px;
+    transform: translate(-150px);
+}
+div.card{
+    transition: 400ms;
+}
+div.card:hover{
+    box-shadow: 0 0px 10px black !important;
+}
+div.modal-header{
+    text-align: center;
+}

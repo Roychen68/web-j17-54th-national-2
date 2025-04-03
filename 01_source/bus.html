@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台北101接駁專車</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="bootstrap.css">
+</head>
+
+<body>
+    <header class="shadow" id="navbar">
+        <div class="logo" id="logo">
+            <img src="../01_01/01_LOGO.png" alt="" class="logo">
+            <h1>台北101接駁專車系統系統</h1>
+        </div>
+        <div class="links">
+            <button class="btn btn-primary" onclick="check()">系統管理</button>
+            <button class="btn btn-danger" onclick="logout()" id="logout-btn">登出</button>
+        </div>
+    </header>
+    <div class="card shadow">
+        <div class="card-header">
+            <a href="bus.html" class="btn btn-info active" id="bus-link">接駁車管理</a>
+            <a href="station.html" class="btn btn-info" id="station-link">站點管理</a>
+            <a href="basic.html" class="btn btn-info" id="basic-setting-link">表單管理</a>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">車牌</th>
+                        <th style="width: 30%;">已行駛時間(分鐘)</th>
+                        <th style="width: 40%;">操作
+                            <button class="btn btn-success" id="add-bus-button"
+                                onclick="$('#insert').modal('show')">新增</button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal fade" id="insert">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1>新增接駁車</h1>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="">車牌</label>
+                        <input type="text" class="form-control" name="plate">
+                    </div>
+                    <div class="form-group">
+                        <label for="">行駛時間</label>
+                        <input class="form-control" name="runtime" type="number" min="0">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="add-button" onclick="insert()">新增</button>
+                    <button class="btn btn-secondary" id="back-button" onclick="cancel()">回上頁</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+<script src="jquery.js"></script>
+<script src="bootstrap.js"></script>
+<script src="js.js"></script>
+<script>
+    let data
+    get()
+    function get() {
+        $("tbody").empty()
+        $.post("api/get.php", { action: "bus" }, function (res) {
+            data = JSON.parse(res)
+            for (let i = 0; i < data.length; i++) {
+                $("tbody").append(`
+                    <tr>
+                        <td class="bus-plate">${data[i].plate}</td>
+                        <td class="bus-runtime">${data[i].time}</td>
+                        <td>
+                            <button class="btn btn-warning edit-bus-button" data-bus-plate="${data[i].plate}" onclick="edit(${i})">編輯</button>
+                            <button class="btn btn-danger delete-bus-button" data-bus-plate="${data[i].plate}" onclick="del(${i})">刪除</button>
+                        </td>
+                    </tr>
+                    `)
+            }
+        })
+    }
+    function insert() {
+        let data = {
+            action: "bus",
+            plate: $("input[name='plate']").val(),
+            time: $("input[name='runtime']").val(),
+        }
+
+        if (VailidNumber(data.time) && VailidValue(data.plate)) {
+            $.post("api/add.php", data, function () {
+                get()
+                cancel()
+            })
+        } else {
+            alert("請輸入正確內容")
+        }
+    }
+    function del(id) {
+        console.log(id);
+        console.log(data);
+
+        let plate = data[id].plate
+
+        var check = confirm("確認刪除接駁車" + plate + "?")
+        if (check) {
+
+            $.post("api/del.php", { action: "bus", id: data[id].id }, function (res) {
+                get()
+                alert("資料已刪除")
+            })
+        }
+    }
+    function edit(i) {
+        let tr = $(`button[onclick="edit(${i})"]`).closest("tr");
+        console.log(tr);
+        tr.html(`
+            <td class="bus-plate" id="bus-plate">${data[i].plate}</td>
+            <td class="bus-runtime">
+                <input type="number" class="form-control" name="runtime" value="${data[i].time}">
+            </td>
+            <td>
+                <button class="btn btn-warning edit-bus-button" id="edit-button" data-bus-plate="${data[i].plate}" onclick="submit(${i})">修改</button>
+                <button class="btn btn-secondary delete-bus-button" data-bus-plate="${data[i].plate}" onclick="back()">回上頁</button>
+            </td>
+        `)
+    }
+    function submit(i) {
+        console.log(i);
+        
+        console.log(data[i]);
+        
+        
+        let formData = {
+            id: data[i].id,
+            action: "bus",
+            time: $("input[name='runtime']").val()
+        }
+        if (VailidNumber(formData.time)) {
+            $.post("api/edit.php",formData,function () {
+                alert("資料已修改")
+                get()
+            })
+        } else {
+            alert("請輸入正確數值")
+        }
+    }
+</script>

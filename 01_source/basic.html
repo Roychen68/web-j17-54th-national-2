@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台北101接駁專車</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="bootstrap.css">
+</head>
+
+<body>
+    <header class="shadow" id="navbar">
+        <div class="logo" id="logo">
+            <img src="../01_01/01_LOGO.png" alt="" class="logo">
+            <h1>台北101接駁專車系統系統</h1>
+        </div>
+        <div class="links">
+            <button class="btn btn-primary" onclick="check()">系統管理</button>
+            <button class="btn btn-danger" onclick="logout()" id="logout-btn">登出</button>
+        </div>
+    </header>
+    <div class="card shadow">
+        <div class="card-header">
+            <a href="bus.html" class="btn btn-info" id="bus-link">接駁車管理</a>
+            <a href="station.html" class="btn btn-info" id="station-link">站點管理</a>
+            <a href="basic.html" class="btn btn-info active" id="basic-setting-link">表單管理</a>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">車牌</th>
+                        <th style="width: 20%;">行駛時間(分鐘)</th>
+                        <th style="width: 20%;">停留時間(分鐘)</th>
+                        <th style="width: 30%;">操作
+                            <button class="btn btn-success" id="add-station-button"
+                                onclick="$('#insert').modal('show')">新增</button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal fade" id="insert">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1>新增站點</h1>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="">站點名稱</label>
+                        <input type="text" class="form-control" name="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="">行駛時間</label>
+                        <input class="form-control" name="arriving-time" type="number" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="">停留時間</label>
+                        <input class="form-control" name="staying-time" type="number" min="0">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="add-button" onclick="insert()">新增</button>
+                    <button class="btn btn-secondary" id="back-button" onclick="cancel()">回上頁</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+<script src="jquery.js"></script>
+<script src="bootstrap.js"></script>
+<script src="js.js"></script>
+<script>
+    let data
+    get()
+    function get() {
+        $("tbody").empty()
+        $.post("api/get.php", { action: "station" }, function (res) {
+            data = JSON.parse(res)
+            for (let i = 0; i < data.length; i++) {
+                $("tbody").append(`
+                    <tr>
+                        <td class="station-name">${data[i].name}</td>
+                        <td class="station-arriving-time">${data[i].need}</td>
+                        <td class="station-staying-time">${data[i].stop}</td>
+                        <td>
+                            <button class="btn btn-warning edit-station-button" data-station="${data[i].name}" onclick="edit(${i})">編輯</button>
+                            <button class="btn btn-danger delete-station-button" data-station="${data[i].name}" onclick="del(${i})">刪除</button>
+                        </td>
+                    </tr>
+                    `)
+            }
+        })
+    }
+    function insert() {
+        let data = {
+            action: "station",
+            name: $("input[name='name']").val(),
+            stop: $("input[name='arriving-time']").val(),
+            need: $("input[name='staying-time']").val(),
+        }
+
+        if (VailidNumber(data.need) && VailidNumber(data.stop) && VailidValue(data.name)) {
+            $.post("api/add.php", data, function () {
+                get()
+                cancel()
+            })
+        } else {
+            alert("請輸入正確內容")
+        }
+    }
+    function del(id) {
+        console.log(id);
+        console.log(data);
+
+        let name = data[id].name
+
+        var check = confirm("確認刪除接駁車" + name + "?")
+        if (check) {
+
+            $.post("api/del.php", { action: "station", id: data[id].id }, function (res) {
+                get()
+                alert("資料已刪除")
+            })
+        }
+    }
+    function edit(i) {
+        let tr = $(`button[onclick="edit(${i})"]`).closest("tr");
+        console.log(tr);
+        tr.html(`
+            <td class="station-name" id="station-name">${data[i].name}</td>
+            <td class="station-runtime">
+                <input type="number" class="form-control" name="arriving-time" value="${data[i].need}">
+            </td>
+            <td class="station-runtime">
+                <input type="number" class="form-control" name="staying-time" value="${data[i].stop}">
+            </td>
+            <td>
+                <button class="btn btn-warning edit-station-button" id="edit-button" data-station-name="${data[i].name}" onclick="submit(${i})">修改</button>
+                <button class="btn btn-secondary delete-station-button" data-station-name="${data[i].name}" onclick="back()">回上頁</button>
+            </td>
+        `)
+    }
+    function submit(i) {
+        console.log(i);
+        
+        console.log(data[i]);
+        
+        
+        let formData = {
+            id: data[i].id,
+            action: "station",
+            need: $("input[name='arriving-time']").val(),
+            stop: $("input[name='staying-time']").val()
+        }
+        if (VailidNumber(formData.need) && VailidNumber(formData.stop)) {
+            $.post("api/edit.php",formData,function () {
+                alert("資料已修改")
+                get()
+            })
+        } else {
+            alert("請輸入正確數值")
+        }
+    }
+</script>
