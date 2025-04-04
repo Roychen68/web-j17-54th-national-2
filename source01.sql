@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1
--- 產生時間： 2025-04-03 03:55:12
+-- 產生時間： 2025-04-04 07:23:17
 -- 伺服器版本： 10.4.32-MariaDB
 -- PHP 版本： 8.0.30
 
@@ -39,6 +39,25 @@ CREATE TABLE `admin` (
 
 INSERT INTO `admin` (`id`, `username`, `password`) VALUES
 (1, 'admin', '1234');
+
+-- --------------------------------------------------------
+
+--
+-- 資料表結構 `basic`
+--
+
+CREATE TABLE `basic` (
+  `id` int(11) NOT NULL,
+  `start` datetime NOT NULL,
+  `end` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- 傾印資料表的資料 `basic`
+--
+
+INSERT INTO `basic` (`id`, `start`, `end`) VALUES
+(1, '2025-04-04 07:19:33', '2025-04-04 07:19:33');
 
 -- --------------------------------------------------------
 
@@ -104,6 +123,12 @@ ALTER TABLE `admin`
   ADD PRIMARY KEY (`id`);
 
 --
+-- 資料表索引 `basic`
+--
+ALTER TABLE `basic`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- 資料表索引 `bus`
 --
 ALTER TABLE `bus`
@@ -129,6 +154,12 @@ ALTER TABLE `station`
 -- 使用資料表自動遞增(AUTO_INCREMENT) `admin`
 --
 ALTER TABLE `admin`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- 使用資料表自動遞增(AUTO_INCREMENT) `basic`
+--
+ALTER TABLE `basic`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --

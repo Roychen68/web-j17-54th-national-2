@@ -62,7 +62,9 @@
                 $("input#start-at").val(data[i].start)
                 $("input#end-at").val(data[i].end)
                 if (new Date(data[i].start) <= now && now <= new Date(data[i].end)) {
-                    $("#enable").prop("checked","true")
+                    $("#enable").prop("checked",true)
+                } else {
+                    $("#enable").prop("checked",false)
                 }
             }
         })
