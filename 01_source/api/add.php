@@ -8,7 +8,7 @@ switch ($action) {
         break;
     
     case 'station':
-        $rank = $pdo->query("SELECT `rank` FROM `station` MAX")->fetch() + 1;
+        $rank = $pdo->query("SELECT MAX(`rank`) FROM `station`")->fetchColumn() + 1;
         $pdo->query("INSERT INTO `station`(`name`, `need`, `stop`,`rank`) VALUES ('{$_POST['name']}','{$_POST['need']}','{$_POST['stop']}','$rank')");
         break;
 }

@@ -21,53 +21,7 @@
             <button class="btn btn-danger" onclick="logout()" id="logout-btn">登出</button>
         </div>
     </header>
-    <div id="route-map">
-        <div class="d-flex flex-row">
-            <div class="station">
-                <div class="station-status">未發車</div>
-                <span class="station-point"></span>
-                <div class="station-name">台北車站</div>
-            </div>
-            <div class="station">
-                <div class="station-status">C12345 約1分鐘</div>
-                <span class="station-point"></span>
-                <div class="station-name">台大醫院</div>
-            </div>
-            <div class="station">
-                <div class="station-status">C12345 約6分鐘</div>
-                <span class="station-point"></span>
-                <div class="station-name">中正紀念堂</div>
-            </div>
-        </div>
-        <div class="d-flex flex-row-reverse">
-            <div class="station">
-                <div class="station-status" style="color:red;">A12345 已到站</div>
-                <span class="station-point"></span>
-                <div class="station-name">大安</div>
-            </div>
-            <div class="station">
-                <div class="station-status">B12345 約1分鐘</div>
-                <span class="station-point"></span>
-                <div class="station-name">大安森林公園</div>
-            </div>
-            <div class="station">
-                <div class="station-status">C12345 約12分鐘</div>
-                <span class="station-point"></span>
-                <div class="station-name">東門</div>
-            </div>
-        </div>
-        <div class="d-flex flex-row-reverse">
-            <div class="station">
-                <div class="station-status">A12345 約6分鐘</div>
-                <span class="station-point"></span>
-                <div class="station-name">信義安和</div>
-            </div>
-            <div class="station">
-                <div class="station-status">A12345 約11分鐘</div>
-                <span class="station-point"></span>
-                <div class="station-name">台北101</div>
-            </div>
-        </div>
+    <div id="route-map" class="card">
     </div>
     <div class="modal fade" id="login">
         <div class="modal-dialog">
@@ -131,10 +85,26 @@
     get()
     function get() {
         $.post("api/get.php",{action: "map"},function (res) {
+            let data  =  JSON.parse(res)
             let map = ""
-            map += `
-            
-            `
+            for (let i = 0; i < data.length; i++) {
+                if (i % 3 === 0) {
+                    map += `
+                    <div class="d-flex ${i % 6 === 3 ?  "flex-row-reverse" : ""}">
+                    `
+                }
+                map += `
+                <div class="station">
+                <div class="station-status ${data[i].class}">${data[i].bus}</div>
+                <span class="station-point"></span>
+                <div class="station-name">${data[i].name}</div>
+                </div>`
+                if (i % 3 === 2 || i === data.length - 1) {
+                    map += `</div>`
+                }
+            }
+            console.log(map);
+            $("#route-map").html(map)
         })
     }
 </script>

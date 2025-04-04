@@ -4,7 +4,7 @@ div#route-map{
     padding: 9px;
     z-index: -5;
     margin: auto;
-    /* transform: translateY(50px); */
+    transform: translateY(100px);
 }
 div.station {
     width: 250px;
@@ -24,18 +24,52 @@ span.station-point {
     position: relative;
     z-index: 1;
 }
-
 div.station::before {
     content: "";
     width: 250px;
     height: 5px;
     background: #34d399;
     position: absolute;
-    top: 50%;
+    top: 36px;
     left: 0;
     z-index: -1;
 }
-
 div.d-flex:first-of-type div.station:first-of-type::before {
+    content: "";
     width: 125px;
+    height: 5px;
+    top: 36px;
+    z-index: -1;
+    transform: translateX(100%);
+}
+div.d-flex:last-of-type:nth-child(odd) div.station:last-of-type::before {
+    width: 125px;
+}
+div.d-flex:last-of-type:nth-child(even) div.station:last-of-type::before {
+    width: 125px;
+    transform: translateX(100%);
+}
+div.d-flex:nth-child(even) div.station:nth-of-type(3):after {
+    content: "";
+    width: 5px;
+    height: 100px;
+    position: absolute;
+    background: #34d399;
+    top: 0;
+    left: 0;
+    transform: translateY(36px);
+}
+div.d-flex:nth-child(odd) div.station:nth-of-type(3):after {
+    content: "";
+    width: 5px;
+    height: 100px;
+    position: absolute;
+    background: #34d399;
+    top: 0;
+    right: 0;
+    transform: translateY(36px);
+}
+
+div.d-flex:last-of-type div.station:last-of-type:after{
+    content: none;
 }

@@ -10,5 +10,9 @@ switch ($action) {
     case 'station':
         $pdo->query("UPDATE `station` SET `need`='{$_POST['need']}',`stop`='{$_POST['stop']}'");
         break;
+    
+    case 'basic':
+        $pdo->query("UPDATE `basic` SET `start`='{$_POST['start']}',`end`='{$_POST['end']}' WHERE 1");
+        break;
 }
 ?>
