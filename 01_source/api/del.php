@@ -11,8 +11,8 @@ switch ($action) {
         $pdo->query("DELETE FROM `station` WHERE `id` = '{$_POST['id']}'");
         break;
 
-    default:
-        # code...
+    case 'participants':
+        $pdo->query("DELETE FROM `participants` WHERE `id` = '{$_POST['id']}'");
         break;
 }
 ?>

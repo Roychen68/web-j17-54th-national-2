@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1
--- 產生時間： 2025-04-04 07:23:17
+-- 產生時間： 2025-04-08 15:32:00
 -- 伺服器版本： 10.4.32-MariaDB
 -- PHP 版本： 8.0.30
 
@@ -91,6 +91,14 @@ CREATE TABLE `participants` (
   `mail` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- 傾印資料表的資料 `participants`
+--
+
+INSERT INTO `participants` (`id`, `name`, `mail`) VALUES
+(2, '', 'user01@test.come'),
+(3, '', 'user02@test.come');
+
 -- --------------------------------------------------------
 
 --
@@ -110,7 +118,13 @@ CREATE TABLE `station` (
 --
 
 INSERT INTO `station` (`id`, `name`, `need`, `stop`, `rank`) VALUES
-(1, '忠孝路', 6, 4, 1);
+(2, '台北車站', 5, 0, 1),
+(3, '臺大醫院', 2, 3, 2),
+(4, '中正紀念堂', 4, 5, 3),
+(5, '東門', 3, 2, 4),
+(6, '大安森林公園', 4, 3, 5),
+(7, '大安', 4, 5, 6),
+(8, '信義安和', 3, 4, 7);
 
 --
 -- 已傾印資料表的索引
@@ -172,13 +186,13 @@ ALTER TABLE `bus`
 -- 使用資料表自動遞增(AUTO_INCREMENT) `participants`
 --
 ALTER TABLE `participants`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `station`
 --
 ALTER TABLE `station`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

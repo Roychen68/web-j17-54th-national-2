@@ -26,13 +26,13 @@ switch ($action) {
             if (!empty($bus)) {
                 $station['closest'] = $bus['plate'];
                 if ($bus['time'] < $arrive) {
-                    $station['bus'] = "約" . ($arrive - $bus['time']) . "分鐘到站";
+                    $station['bus'] = $bus['plate']."<br>約" . ($arrive - $bus['time']) . "分鐘到站";
                 } else {
-                    $station['bus'] = "已到站";
+                    $station['bus'] = "<br>已到站";
                     $station['class'] = "text-danger";
                 }
             } else {
-                $station['bus'] = "未發車";
+                $station['bus'] = "<br>未發車";
             }
 
             $stations[$key] = $station;
@@ -43,6 +43,10 @@ switch ($action) {
     case 'basic':
         $time = $pdo->query("SELECT * FROM `basic`")->fetchAll();
         echo json_encode($time);
+        break;
+    case 'participants':
+        $participants = $pdo->query("SELECT * FROM `participants`")->fetchAll();
+        echo json_encode($participants);
         break;
 }
 ?>

@@ -11,5 +11,9 @@ switch ($action) {
         $rank = $pdo->query("SELECT MAX(`rank`) FROM `station`")->fetchColumn() + 1;
         $pdo->query("INSERT INTO `station`(`name`, `need`, `stop`,`rank`) VALUES ('{$_POST['name']}','{$_POST['need']}','{$_POST['stop']}','$rank')");
         break;
+    
+    case 'participants':
+        $pdo->query("INSERT INTO `participants`(`mail`) VALUES ('{$_POST['mail']}')");
+        break;
 }
 ?>

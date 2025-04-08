@@ -33,6 +33,7 @@ div.station::before {
     top: 36px;
     left: 0;
     z-index: -1;
+    transform:  translateY(25px);
 }
 div.d-flex:first-of-type div.station:first-of-type::before {
     content: "";
@@ -40,14 +41,14 @@ div.d-flex:first-of-type div.station:first-of-type::before {
     height: 5px;
     top: 36px;
     z-index: -1;
-    transform: translateX(100%);
+    transform: translateX(100%) translateY(25px);
 }
 div.d-flex:last-of-type:nth-child(odd) div.station:last-of-type::before {
     width: 125px;
 }
 div.d-flex:last-of-type:nth-child(even) div.station:last-of-type::before {
     width: 125px;
-    transform: translateX(100%);
+    transform: translateX(100%) translateY(25px);
 }
 div.d-flex:nth-child(even) div.station:nth-of-type(3):after {
     content: "";
@@ -57,7 +58,7 @@ div.d-flex:nth-child(even) div.station:nth-of-type(3):after {
     background: #34d399;
     top: 0;
     left: 0;
-    transform: translateY(36px);
+    transform: translateY(36px) translateY(25px);
 }
 div.d-flex:nth-child(odd) div.station:nth-of-type(3):after {
     content: "";
@@ -67,7 +68,7 @@ div.d-flex:nth-child(odd) div.station:nth-of-type(3):after {
     background: #34d399;
     top: 0;
     right: 0;
-    transform: translateY(36px);
+    transform: translateY(36px) translateY(25px);
 }
 
 div.d-flex:last-of-type div.station:last-of-type:after{

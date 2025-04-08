@@ -32,6 +32,12 @@ function VailidValue(value) {
         value !== ''
     )
 }
+function VailidMail(value) {
+    return (
+        value !== '' &&
+        value.includes("@")
+    )
+}
 function cancel() {
     $("div.modal").modal("hide")
 }

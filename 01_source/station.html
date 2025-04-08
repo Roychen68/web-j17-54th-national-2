@@ -83,6 +83,7 @@
     let data
     get()
     function get() {
+        $(".btn-warning").prop("disabled",false)
         $("tbody").empty()
         $.post("api/get.php", { action: "station" }, function (res) {
             data = JSON.parse(res)
@@ -105,8 +106,8 @@
         let data = {
             action: "station",
             name: $("input[name='name']").val(),
-            stop: $("input[name='arriving-time']").val(),
-            need: $("input[name='staying-time']").val(),
+            need: $("input[name='arriving-time']").val(),
+            stop: $("input[name='staying-time']").val(),
         }
 
         if (VailidNumber(data.need) && VailidNumber(data.stop) && VailidValue(data.name)) {
@@ -134,6 +135,7 @@
         }
     }
     function edit(i) {
+        $(".btn-warning").prop("disabled",true)
         let tr = $(`button[onclick="edit(${i})"]`).closest("tr");
         console.log(tr);
         tr.html(`
@@ -151,6 +153,7 @@
         `)
     }
     function submit(i) {
+        $(".btn-warning").prop("disabled",false)
         console.log(i);
         
         console.log(data[i]);
@@ -160,7 +163,7 @@
             id: data[i].id,
             action: "station",
             need: $("input[name='arriving-time']").val(),
-            stop: $("input[name='staying-time']").val()
+            stop: $("input[name='staying-time']").val(),
         }
         if (VailidNumber(formData.need) && VailidNumber(formData.stop)) {
             $.post("api/edit.php",formData,function () {
