@@ -195,16 +195,21 @@
         }
     }
     function json() {
-        let data
+        const file = $("#file")[0].files[0]
         const reader = new FileReader()
 
         reader.onload = function (e) {
-            data = JSON.parse(e.target.result)
+            const data = JSON.parse(e.target.result)
             console.log(data);
+            data.forEach((item,index) => {
+                console.log(item.email);
+                $.post("api/add.php",{action:"participants",mail: item.email},function () {
+                })
+            });
+            get()
+            $("#import").modal("hide")
         }
-
-        $.post("api/add.php",{action:"participants",data: data},function () {
-            
-        })
+        
+    reader.readAsText(file)
     }
 </script>
