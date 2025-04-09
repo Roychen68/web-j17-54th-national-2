@@ -30,7 +30,7 @@
     <div class="card shadow info d-flex flex-row">
         <div class="card-body w-25">
             <a href="basic.html" id="basic-setting-link" class="btn btn-outline-dark w-100 mb-3">基本設定</a>
-            <a href="participants.html" id="participant-setting-link" class="btn btn-outline-dark w-100 mb-3 active">參與者設定</a>
+            <a href="participants.html" id="participants-setting-link" class="btn btn-outline-dark w-100 mb-3 active">參與者設定</a>
             <a href="basic.html" id="response-setting-link" class="btn btn-outline-dark w-100 mb-3">檢視回應</a>
             <a href="basic.html" id="dispatch-setting-link" class="btn btn-outline-dark w-100 mb-3">派遣狀態</a>
         </div>
@@ -81,13 +81,13 @@
                 <div class="modal-body">
                     <div class="input-group">
                         <div class="custom-file">
-                            <label for="file" class="custom-file-label">請選擇json檔案</label>
+                            <label for="file" class="custom-file-label"></label>
                             <input type="file" name="" id="file" class="form-control" accept=".json">
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" id="add-button" onclick="json()">新增</button>
+                    <button class="btn btn-primary" id="add-button" onclick="json()">匯入</button>
                     <button class="btn btn-secondary" id="back-button" onclick="cancel()">回上頁</button>
                 </div>
             </div>
@@ -100,6 +100,12 @@
 <script src="bootstrap.js"></script>
 <script src="js.js"></script>
 <script>
+    $("#file").change(function () {
+        console.log("change");
+        
+        const file = this.files[0]?.name
+        $('.custom-file-label').text(file)
+    })
     let data
     get()
     function get() {
@@ -188,5 +194,17 @@
             alert("請輸入正確信箱")
         }
     }
-    $("")
+    function json() {
+        let data
+        const reader = new FileReader()
+
+        reader.onload = function (e) {
+            data = JSON.parse(e.target.result)
+            console.log(data);
+        }
+
+        $.post("api/add.php",{action:"participants",data: data},function () {
+            
+        })
+    }
 </script>

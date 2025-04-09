@@ -50,3 +50,11 @@ $("div.logo").click(function () {
 $("div.modal").on("hidden.bs.modal",function () {
     $("input.form-control").val("")
 })
+count()
+function count() {
+    $.post("api/get.php",{action: "participants"},function (res) {
+        const participants = JSON.parse(res)
+        console.log(participants.length);
+        $("#participants-setting-link").append(`<span class="count-badge">${participants.length}</span>`)
+    })
+}
