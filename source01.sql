@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1
--- 產生時間： 2025-04-08 15:32:00
+-- 產生時間： 2025-04-13 15:27:49
 -- 伺服器版本： 10.4.32-MariaDB
 -- PHP 版本： 8.0.30
 
@@ -57,7 +57,7 @@ CREATE TABLE `basic` (
 --
 
 INSERT INTO `basic` (`id`, `start`, `end`) VALUES
-(1, '2025-04-04 07:19:33', '2025-04-04 07:19:33');
+(1, '2025-04-13 16:40:00', '2025-04-13 16:40:00');
 
 -- --------------------------------------------------------
 
@@ -82,12 +82,28 @@ INSERT INTO `bus` (`id`, `plate`, `time`) VALUES
 -- --------------------------------------------------------
 
 --
+-- 資料表結構 `form`
+--
+
+CREATE TABLE `form` (
+  `form` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- 傾印資料表的資料 `form`
+--
+
+INSERT INTO `form` (`form`) VALUES
+(1);
+
+-- --------------------------------------------------------
+
+--
 -- 資料表結構 `participants`
 --
 
 CREATE TABLE `participants` (
   `id` int(11) NOT NULL,
-  `name` text NOT NULL,
   `mail` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -95,9 +111,31 @@ CREATE TABLE `participants` (
 -- 傾印資料表的資料 `participants`
 --
 
-INSERT INTO `participants` (`id`, `name`, `mail`) VALUES
-(2, '', 'user01@test.come'),
-(3, '', 'user02@test.come');
+INSERT INTO `participants` (`id`, `mail`) VALUES
+(2, 'user01@test.come'),
+(3, 'user02@test.come'),
+(4, 'roychen68@test.com');
+
+-- --------------------------------------------------------
+
+--
+-- 資料表結構 `response`
+--
+
+CREATE TABLE `response` (
+  `id` int(11) NOT NULL,
+  `name` text NOT NULL,
+  `mail` text NOT NULL,
+  `note` text NOT NULL,
+  `bus` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- 傾印資料表的資料 `response`
+--
+
+INSERT INTO `response` (`id`, `name`, `mail`, `note`, `bus`) VALUES
+(4, 'adsf', 'user01@test.come', 'fads', 'AUTO-6929');
 
 -- --------------------------------------------------------
 
@@ -149,9 +187,21 @@ ALTER TABLE `bus`
   ADD PRIMARY KEY (`id`);
 
 --
+-- 資料表索引 `form`
+--
+ALTER TABLE `form`
+  ADD PRIMARY KEY (`form`);
+
+--
 -- 資料表索引 `participants`
 --
 ALTER TABLE `participants`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- 資料表索引 `response`
+--
+ALTER TABLE `response`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -186,7 +236,13 @@ ALTER TABLE `bus`
 -- 使用資料表自動遞增(AUTO_INCREMENT) `participants`
 --
 ALTER TABLE `participants`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- 使用資料表自動遞增(AUTO_INCREMENT) `response`
+--
+ALTER TABLE `response`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `station`

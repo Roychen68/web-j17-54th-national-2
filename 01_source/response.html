@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台北101接駁專車</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="bootstrap.css">
+</head>
+
+<body>
+    <header class="shadow" id="navbar">
+        <div class="logo" id="logo">
+            <img src="../01_01/01_LOGO.png" alt="" class="logo">
+            <h1>台北101接駁專車系統系統</h1>
+        </div>
+        <div class="links">
+            <button class="btn btn-primary" onclick="check()">系統管理</button>
+            <button class="btn btn-danger" onclick="logout()" id="logout-btn">登出</button>
+        </div>
+    </header>
+    <div class="card shadow">
+        <div class="card-body">
+            <a href="bus.html" class="btn btn-info" id="bus-link">接駁車管理</a>
+            <a href="station.html" class="btn btn-info" id="station-link">站點管理</a>
+            <a href="basic.html" class="btn btn-info active" id="basic-setting-link">表單管理</a>
+        </div>
+    </div>
+    <div class="card shadow info d-flex flex-row">
+        <div class="card-body w-25">
+            <a href="basic.html" id="basic-setting-link" class="btn btn-outline-dark w-100 mb-3">基本設定</a>
+            <a href="participants.html" id="participants-setting-link" class="btn btn-outline-dark w-100 mb-3">參與者設定</a>
+            <a href="response.html" id="response-setting-link" class="btn btn-outline-dark w-100 mb-3 active">檢視回應</a>
+            <a href="dispatch.html" id="dispatch-setting-link" class="btn btn-outline-dark w-100 mb-3">派遣狀態</a>
+        </div>
+        <div class="card-body w-75">
+            <h1>參與者設定</h1>
+            <button class="btn btn-primary btn-lg" onclick="allocate()">產生接駁車</button>
+            <table class="table table-striped">
+                <thead>
+                    <th>#</th>
+                    <th>名字</th>
+                    <th>信箱</th>
+                    <th>備註</th>
+                    <th>操作</th>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>
+<script src="jquery.js"></script>
+<script src="bootstrap.js"></script>
+<script src="js.js"></script>
+<script>
+    $("#file").change(function () {
+        console.log("change");
+        
+        const file = this.files[0]?.name
+        $('.custom-file-label').text(file)
+    })
+    let data
+    get()
+    function get() {
+        $(".btn-warning").prop("disabled",false)
+        $("tbody").empty()
+        $.post("api/get.php", { action: "response" }, function (res) {
+            data = JSON.parse(res)
+            for (let i = 0; i < data.length; i++) {
+                $("tbody").append(`
+                <tr>
+                    <td style="width: 10%;">${data[i].id}</td>
+                    <td style="width: 10%;" class="response-name">${data[i].name}</td>
+                    <td style="width: 20%;" class="response-mail">${data[i].mail}</td>
+                    <td style="width: 30%;" class="response-note">${data[i].note}</td>
+                    <td style="width: 10%;">
+                        <button class="btn btn-danger delete-button" data-email="${data[i].email}" onclick="del(${i})">刪除</button>
+                    </td>
+                </tr>
+                `)
+            }
+        })
+    }
+    function del(id) {
+        console.log(id);
+        console.log(data);
+
+
+        var check = confirm("確認刪除回應" + data[id].mail + "?")
+        if (check) {
+
+            $.post("api/del.php", { action: "response", id: data[id].id }, function (res) {
+                get()
+                alert("資料已刪除")
+            })
+        }
+    }
+    function allocate() {
+        if (confirm("確定要產生接駁車嗎？這會清空所以偶回應並關閉表單")) {
+            $.post("api/edit.php",{action: "allocate"},function () {
+                location.href = "dispatch.html"
+            })
+        }
+    }
+</script>

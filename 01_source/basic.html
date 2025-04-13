@@ -31,8 +31,8 @@
         <div class="card-body w-25">
             <a href="basic.html" id="basic-setting-link" class="btn btn-outline-dark w-100 mb-3 active">基本設定</a>
             <a href="participants.html" id="participants-setting-link" class="btn btn-outline-dark w-100 mb-3">參與者設定</a>
-            <a href="basic.html" id="response-setting-link" class="btn btn-outline-dark w-100 mb-3">檢視回應</a>
-            <a href="basic.html" id="dispatch-setting-link" class="btn btn-outline-dark w-100 mb-3">派遣狀態</a>
+            <a href="response.html" id="response-setting-link" class="btn btn-outline-dark w-100 mb-3">檢視回應</a>
+            <a href="dispatch.html" id="dispatch-setting-link" class="btn btn-outline-dark w-100 mb-3">派遣狀態</a>
         </div>
         <div class="card-body w-75">
             <h1>基本設定</h1>
@@ -54,23 +54,31 @@
 <script>
     get()
     function get() {
-        $.post("api/get.php",{action: "basic"},function (res) {
-            let data = JSON.parse(res)
-            console.log(data);
-            let now = new Date
-            for (let i = 0; i < data.length; i++) {
-                $("input#start-at").val(data[i].start)
-                $("input#end-at").val(data[i].end)
-                if (new Date(data[i].start) <= now && now <= new Date(data[i].end)) {
-                    $("#enable").prop("checked",true)
-                } else {
-                    $("#enable").prop("checked",false)
+        $.post("api/get.php",{action: "form"},function (formRes) {
+            let form
+            $.post("api/get.php",{action: "basic"},function (res) {
+                form = parseInt(formRes)
+                let data = JSON.parse(res)
+                let now = new Date
+                for (let i = 0; i < data.length; i++) {
+                    const start = data[i].start
+                    const end = data[i].end
+                    console.log(start,end);
+                    
+                    $("input#start-at").val(start)
+                    $("input#end-at").val(end)
+                    if (start <= now && now <= end || form == 1) {
+                        $("#enable").prop("checked",true)
+                    } else {
+                        $("#enable").prop("checked",false)
+                    }
                 }
-            }
+            })
         })
     }
     function save() {
         const form = {
+            now: new Date().toISOString(),
             start: $("input#start-at").val(),
             end: $("input#end-at").val(),
             action: "basic"
@@ -79,4 +87,12 @@
             get()
         })
     }
+    $("#enable").change(function () {
+        const form = {
+            action: "form",
+            form: $("#enable").prop("checked"),
+        }
+        $.post("api/edit.php",form,function () {
+        })
+    })
 </script>

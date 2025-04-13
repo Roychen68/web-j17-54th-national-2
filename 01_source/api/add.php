@@ -15,5 +15,28 @@ switch ($action) {
     case 'participants':
         $pdo->query("INSERT INTO `participants`(`mail`) VALUES ('{$_POST['mail']}')");
         break;
+    
+    case 'response':
+        $participants = $pdo->query("SELECT * FROM `participants` WHERE `mail` = '{$_POST['mail']}'")->fetch();
+        $response = $pdo->query("SELECT * FROM `response` WHERE `mail` = '{$_POST['mail']}'")->fetchColumn();
+        $time = $pdo->query("SELECT * FROM `basic` WHERE 1")->fetch();
+        $now = strtotime($_POST['time']);
+        $start = strtotime($time['start']);
+        $end = strtotime($time['end']);
+        if ($response > 0) {
+            echo "您已經猜與過意見調查";
+            break;
+        } else if ($participants < 1) {
+            echo "您不在參與名單";
+            break;
+        } else if ($now < $start || $now > $end) {
+            echo "該表單不接受回應";
+            break;
+        } else {
+            $pdo->query("INSERT INTO `response`(`name`, `mail`, `note`) VALUES ('{$_POST['name']}','{$_POST['mail']}','{$_POST['note']}')");
+            echo"已送出回應";
+        }
+        
+        break;
 }
 ?>

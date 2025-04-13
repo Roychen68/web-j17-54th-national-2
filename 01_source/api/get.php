@@ -40,13 +40,23 @@ switch ($action) {
         echo json_encode($stations);
     break;
 
+    case 'form':
+        $form = $pdo->query("SELECT * FROM `form`")->fetch();
+        echo $form['form'];
+        break;
     case 'basic':
+        
         $time = $pdo->query("SELECT * FROM `basic`")->fetchAll();
         echo json_encode($time);
         break;
     case 'participants':
         $participants = $pdo->query("SELECT * FROM `participants`")->fetchAll();
         echo json_encode($participants);
+        break;
+    
+    case 'response':
+        $response = $pdo->query("SELECT * FROM `response` WHERE `bus` = ''")->fetchAll();
+        echo json_encode($response);
         break;
 }
 ?>

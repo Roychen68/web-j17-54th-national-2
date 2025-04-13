@@ -57,4 +57,9 @@ function count() {
         console.log(participants.length);
         $("#participants-setting-link").append(`<span class="count-badge">${participants.length}</span>`)
     })
+    $.post("api/get.php",{action: "response"},function (res) {
+        const response = JSON.parse(res)
+        console.log(response.length);
+        $("#response-setting-link").append(`<span class="count-badge">${response.length}</span>`)
+    })
 }
