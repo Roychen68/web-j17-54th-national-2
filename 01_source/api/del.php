@@ -18,5 +18,10 @@ switch ($action) {
     case 'response':
         $pdo->query("DELETE FROM `response` WHERE `id` = '{$_POST['id']}'");
         break;
+    case 'route':
+        $pdo->query("DELETE FROM `route` WHERE `id` = '{$_POST['id']}'");
+        $pdo->query("DELETE FROM `bus` WHERE `route` = '{$_POST['route']}'");
+        $pdo->query("DELETE FROM `station` WHERE `route` = '{$_POST['route']}'");
+        break;
 }
 ?>

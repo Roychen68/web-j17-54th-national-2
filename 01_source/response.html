@@ -22,6 +22,7 @@
     </header>
     <div class="card shadow">
         <div class="card-body">
+            <a href="map.html" class="btn btn-info" id="route-link">路線管理</a>
             <a href="bus.html" class="btn btn-info" id="bus-link">接駁車管理</a>
             <a href="station.html" class="btn btn-info" id="station-link">站點管理</a>
             <a href="basic.html" class="btn btn-info active" id="basic-setting-link">表單管理</a>
@@ -32,11 +33,10 @@
             <a href="basic.html" id="basic-setting-link" class="btn btn-outline-dark w-100 mb-3">基本設定</a>
             <a href="participants.html" id="participants-setting-link" class="btn btn-outline-dark w-100 mb-3">參與者設定</a>
             <a href="response.html" id="response-setting-link" class="btn btn-outline-dark w-100 mb-3 active">檢視回應</a>
-            <a href="dispatch.html" id="dispatch-setting-link" class="btn btn-outline-dark w-100 mb-3">派遣狀態</a>
+            <a href="dispatch.html" id="dispatch-setting-link" class="btn btn-outline-dark w-100 mb-3">統計資料</a>
         </div>
         <div class="card-body w-75">
             <h1>參與者設定</h1>
-            <button class="btn btn-primary btn-lg" onclick="allocate()">產生接駁車</button>
             <table class="table table-striped">
                 <thead>
                     <th>#</th>
@@ -97,13 +97,6 @@
             $.post("api/del.php", { action: "response", id: data[id].id }, function (res) {
                 get()
                 alert("資料已刪除")
-            })
-        }
-    }
-    function allocate() {
-        if (confirm("確定要產生接駁車嗎？這會清空所以偶回應並關閉表單")) {
-            $.post("api/edit.php",{action: "allocate"},function () {
-                location.href = "dispatch.html"
             })
         }
     }

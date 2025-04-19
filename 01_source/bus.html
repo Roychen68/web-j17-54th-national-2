@@ -22,6 +22,7 @@
     </header>
     <div class="card shadow">
         <div class="card-body">
+            <a href="map.html" class="btn btn-info" id="route-link">路線管理</a>
             <a href="bus.html" class="btn btn-info active" id="bus-link">接駁車管理</a>
             <a href="station.html" class="btn btn-info" id="station-link">站點管理</a>
             <a href="basic.html" class="btn btn-info" id="basic-setting-link">表單管理</a>
@@ -29,6 +30,9 @@
     </div>
     <div class="card shadow info">
         <div class="card-body">
+            <select id="" class="form-control">
+                <option disabled selected>請選擇路線</option>
+            </select>
             <table class="table">
                 <thead>
                     <tr>
@@ -76,19 +80,31 @@
 <script src="js.js"></script>
 <script>
     let data
-    get()
+    let route
+    $.post("api/get.php", { action: "route" }, function (res) {
+        data = JSON.parse(res)
+        let options
+        for (let i = 0; i < data.length; i++) {
+            options += `
+            <option value="${data[i].name}" ${i == 0? "selected" : ""}>${data[i].name}</option>
+            `
+            $("select").html(options)
+            route = data[0].name
+        }
+        get()
+    })
     function get() {
         $("tbody").empty()
-        $.post("api/get.php", { action: "bus" }, function (res) {
+        $.post("api/get.php", { route: route, action: "bus" }, function (res) {
             data = JSON.parse(res)
             for (let i = 0; i < data.length; i++) {
                 $("tbody").append(`
-                    <tr>
-                        <td class="bus-plate">${data[i].plate}</td>
-                        <td class="bus-runtime">${data[i].time}</td>
-                        <td>
-                            <button class="btn btn-warning edit-bus-button" data-bus-plate="${data[i].plate}" onclick="edit(${i})">編輯</button>
-                            <button class="btn btn-danger delete-bus-button" data-bus-plate="${data[i].plate}" onclick="del(${i})">刪除</button>
+                <tr>
+                    <td class="bus-plate">${data[i].plate}</td>
+                    <td class="bus-runtime">${data[i].time}</td>
+                    <td>
+                        <button class="btn btn-warning edit-bus-button" data-bus-plate="${data[i].plate}" onclick="edit(${i})">編輯</button>
+                        <button class="btn btn-danger delete-bus-button" data-bus-plate="${data[i].plate}" onclick="del(${i})">刪除</button>
                         </td>
                     </tr>
                     `)
@@ -149,7 +165,8 @@
         let formData = {
             id: data[i].id,
             action: "bus",
-            time: $("input[name='runtime']").val()
+            time: $("input[name='runtime']").val(),
+            route: route
         }
         if (VailidNumber(formData.time)) {
             $.post("api/edit.php",formData,function () {
@@ -160,4 +177,9 @@
             alert("請輸入正確數值")
         }
     }
+    $("select").on("input",function () {
+        route = $(this).val()
+        console.log(route);
+        get()
+    })
 </script>

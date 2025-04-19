@@ -9,7 +9,7 @@ switch ($action) {
     
     case 'station':
         $rank = $pdo->query("SELECT MAX(`rank`) FROM `station`")->fetchColumn() + 1;
-        $pdo->query("INSERT INTO `station`(`name`, `need`, `stop`,`rank`) VALUES ('{$_POST['name']}','{$_POST['need']}','{$_POST['stop']}','$rank')");
+        $pdo->query("INSERT INTO `station`(`name`, `need`, `stop`,`rank`,`route`) VALUES ('{$_POST['name']}','{$_POST['need']}','{$_POST['stop']}','$rank','{$_POST['route']}')");
         break;
     
     case 'participants':
@@ -37,6 +37,9 @@ switch ($action) {
             echo"已送出回應";
         }
         
+        break;
+    case 'route':
+        $pdo->query("INSERT INTO `route`(`name`) VALUES ('{$_POST['name']}')");
         break;
 }
 ?>

@@ -20,18 +20,5 @@ switch ($action) {
         }
         
         break;
-    case 'allocate':
-        $num = 3;
-        $total = $pdo->query("SELECT COUNT(*) FROM `response`")->fetchColumn();
-        $count = ceil($total / $num);
-        for ($i=0; $i < $count; $i++) { 
-            $start = $i * $num;
-            $bus = "AUTO-".sprintf("%04d",rand(1,9999));
-            $users = $pdo->query("SELECT * FROM `response` LIMIT $start,$num")->fetchAll();
-            foreach ($users as $user) {
-                $pdo->exec("UPDATE `response` SET `bus` = '$bus' WHERE `id` = '{$user['id']}'");              
-            }
-        }
-        break;
 }
 ?>

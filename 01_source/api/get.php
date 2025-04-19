@@ -4,24 +4,24 @@ $action = $_POST['action'];
 
 switch ($action) {
     case 'bus':
-        $bus = $pdo->query("SELECT * FROM `bus`")->fetchAll();
+        $bus = $pdo->query("SELECT * FROM `bus` WHERE `route` = '{$_POST['route']}'")->fetchAll();
         echo json_encode($bus);
         break;
 
     case 'station':
-        $station = $pdo->query("SELECT * FROM `station`")->fetchAll();
+        $station = $pdo->query("SELECT * FROM `station` WHERE `route` = '{$_POST['route']}'")->fetchAll();
         echo json_encode($station);
         break;
 
     case 'map':
-        $stations = $pdo->query("SELECT * FROM `station` ORDER BY `rank`")->fetchAll(PDO::FETCH_ASSOC);
+        $stations = $pdo->query("SELECT * FROM `station` WHERE `route` = '{$_POST['route']}' ORDER BY `rank`")->fetchAll(PDO::FETCH_ASSOC);
 
 
         foreach ($stations as $key => $station) {
-            $prev = $pdo->query("SELECT SUM(`need` + `stop`) FROM `station` WHERE `rank` < {$station['rank']}")->fetchColumn();
+            $prev = $pdo->query("SELECT SUM(`need` + `stop`) FROM `station` WHERE `rank` < '{$station['rank']}' AND `route` = '{$_POST['route']}'")->fetchColumn();
             $arrive = $prev + $station['need'];
             $leave = $arrive + $station['stop'];
-            $bus = $pdo->query("SELECT * FROM `bus` WHERE `time` <= $leave ORDER BY `time` DESC")->fetch(PDO::FETCH_ASSOC);
+            $bus = $pdo->query("SELECT * FROM `bus` WHERE `time` <= $leave AND `route` = '{$_POST['route']}' ORDER BY `time` DESC")->fetch(PDO::FETCH_ASSOC);
                 
             if (!empty($bus)) {
                 $station['closest'] = $bus['plate'];
@@ -32,6 +32,7 @@ switch ($action) {
                     $station['class'] = "text-danger";
                 }
             } else {
+                $station['class'] = "text-secondary";
                 $station['bus'] = "<br>未發車";
             }
 
@@ -55,8 +56,13 @@ switch ($action) {
         break;
     
     case 'response':
-        $response = $pdo->query("SELECT * FROM `response` WHERE `bus` = ''")->fetchAll();
+        $response = $pdo->query("SELECT * FROM `response`")->fetchAll();
         echo json_encode($response);
+        break;
+
+    case 'route':
+        $route = $pdo->query("SELECT * FROM `route`")->fetchAll();
+        echo json_encode($route);
         break;
 }
 ?>
