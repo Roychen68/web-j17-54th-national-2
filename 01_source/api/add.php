@@ -4,7 +4,7 @@ include "db.php";
 $action = $_POST['action'];
 switch ($action) {
     case 'bus':
-        $pdo->query("INSERT INTO `bus`(`plate`, `time`) VALUES ('{$_POST['plate']}','{$_POST['time']}')");
+        $pdo->query("INSERT INTO `bus`(`plate`, `time`,`route`) VALUES ('{$_POST['plate']}','{$_POST['time']}','{$_POST['route']}')");
         break;
     
     case 'station':

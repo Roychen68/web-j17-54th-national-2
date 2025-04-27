@@ -38,6 +38,9 @@ function VailidMail(value) {
         value.includes("@")
     )
 }
+$("form").submit(function (e) {
+    e.preventDefault()
+})
 function cancel() {
     $("div.modal").modal("hide")
 }

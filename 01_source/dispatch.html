@@ -42,7 +42,7 @@
                 <option disabled selected>請選擇路線</option>
             </select>
             <br>
-            <button class="btn btn-primary">以json檔匯出</button>
+            <button class="btn btn-primary" onclick="readout()">以json檔匯出</button>
         </div>
     </div>
 </body>
@@ -64,12 +64,14 @@
             $("select").html(options)
             route = data[0].name
         }
-        get()
     })
     let response
     function readout() {
         $.post("api/get.php", { action: "station", route: route }, function (res) {
-            data = JSON.parse(res)
+            const blob = new Blob([`${res}`], {type: "application/json;"})
+            const url = URL.createObjectURL(blob)
+            const link = $("<a>").attr({ href : url, download: `${route}.json`})[0];
+                link.click();
         })
     }
 </script>

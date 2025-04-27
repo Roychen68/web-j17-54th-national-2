@@ -28,53 +28,51 @@
             <a href="basic.html" class="btn btn-info" id="basic-setting-link">表單管理</a>
         </div>
     </div>
-    <div class="card shadow info">
+    <div class="card info">
         <div class="card-body">
-            <select id="" class="form-control">
-                <option disabled selected>請選擇路線</option>
-            </select>
-            <table class="table">
+            <select class="form-control"></select>
+            <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th style="width: 30%;">車牌</th>
-                        <th style="width: 20%;">行駛時間(分鐘)</th>
-                        <th style="width: 20%;">停留時間(分鐘)</th>
-                        <th style="width: 30%;">操作
-                            <button class="btn btn-success" id="add-station-button"
-                                onclick="$('#insert').modal('show')">新增</button>
+                        <th>站點名稱</th>
+                        <th>行駛時間(分鐘)</th>
+                        <th>停留時間(分鐘)</th>
+                        <th>操作
+                            <button class="btn btn-success" onclick="$('div.modal').modal('show')">新增</button>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
+                    
                 </tbody>
             </table>
         </div>
     </div>
-    <div class="modal fade" id="insert">
+    <div class="modal fade">
         <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1>新增站點</h1>
+            <form class="modal-content" onsubmit="insert()">
+                <div class="modal-header text-center">
+                    <h5>站點管理-新增站點</h5>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="">站點名稱</label>
-                        <input type="text" class="form-control" name="name">
+                        <input type="text" class="form-control" name="station" required>
                     </div>
                     <div class="form-group">
-                        <label for="">行駛時間</label>
-                        <input class="form-control" name="arriving-time" type="number" min="0">
+                        <label for="">行駛時間(分鐘)</label>
+                        <input type="text" class="form-control" name="arriving-time" min="0" required>
                     </div>
                     <div class="form-group">
-                        <label for="">停留時間</label>
-                        <input class="form-control" name="staying-time" type="number" min="0">
+                        <label for="">停留時間(分鐘)</label>
+                        <input type="text" class="form-control" name="staying-time" min="0" required>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" id="add-button" onclick="insert()">新增</button>
-                    <button class="btn btn-secondary" id="back-button" onclick="cancel()">回上頁</button>
+                    <button class="btn btn-primary" id="add-station-button" type="submit">新增</button>
+                    <button class="btn btn-secondary" type="button" onclick="$('div.modal').modal('hide')">取消</button>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </body>
@@ -84,119 +82,90 @@
 <script src="bootstrap.js"></script>
 <script src="js.js"></script>
 <script>
-    let data
     let route
-    $.post("api/get.php", { action: "route" }, function (res) {
-        data = JSON.parse(res)
-        let options
-        for (let i = 0; i < data.length; i++) {
-            options += `
-            <option value="${data[i].name}" ${i == 0? "selected" : ""}>${data[i].name}</option>
+    let data
+    $.post("api/get.php",{action: "route"},function (res) {
+        let Data = JSON.parse(res)
+        let Route
+        for (let i = 0; i < Data.length; i++) {
+            Route += `
+            <option>${Data[i].name}</option>
             `
-            $("select").html(options)
-            route = data[0].name
+            route = Data[0].name
         }
+        $("select").html(Route)
+        get()
+    })
+    $("select").change(function () {
+        route = $("select").val()
         get()
     })
     function get() {
-        $(".btn-warning").prop("disabled",false)
-        $("tbody").empty()
-            $.post("api/get.php", { route: route , action: "station" }, function (res) {
-                data = JSON.parse(res)
-                for (let i = 0; i < data.length; i++) {
-                    $("tbody").append(`
-                        <tr>
-                            <td class="station-name">${data[i].name}</td>
-                            <td class="station-arriving-time">${data[i].need}</td>
-                            <td class="station-staying-time">${data[i].stop}</td>
-                            <td>
-                                <button class="btn btn-warning edit-station-button" data-station="${data[i].name}" onclick="edit(${i})">編輯</button>
-                                <button class="btn btn-danger delete-station-button" data-station="${data[i].name}" onclick="del(${i})">刪除</button>
-                            </td>
-                        </tr>
-                        `)
-                }
-            })
-        console.log(data);
+        $.post("api/get.php",{route: route,action: "station"},function (res) {
+        data = JSON.parse(res)
+        let table = ""
+        for (let i = 0; i < data.length; i++) {
+            table += `
+            <tr>
+                <td class="station-name">${data[i].name}</td>
+                <td class="station-staying-time">${data[i].stop}</td>
+                <td class="station-arriving-time">${data[i].need}</td>
+                <td>
+                    <button class="btn btn-warning edit-station-button" data-station="${data[i].name}" onclick="edit(${i})">修改</button>
+                    <button class="btn btn-danger delete-station-button" data-station="${data[i].name}" onclick="del(${i})">刪除</button>
+                </td>
+            </tr>
+            `
+        }
+        $("tbody").html(table)
+    })
     }
-    
     function insert() {
-        let data = {
+        const form = {
             action: "station",
-            name: $("input[name='name']").val(),
+            name: $("input[name='station']").val(),
             need: $("input[name='arriving-time']").val(),
             stop: $("input[name='staying-time']").val(),
             route: route
         }
-
-        if (VailidNumber(data.need) && VailidNumber(data.stop) && VailidValue(data.name)) {
-            $.post("api/add.php", data, function () {
-                get()
-                cancel()
-            })
-        } else {
-            alert("請輸入正確內容")
-        }
+        $.post("api/add.php",form,function () {
+            get()
+            $('div.modal').modal('hide')
+        })
     }
     function del(id) {
-        console.log(id);
-        console.log(data);
-
-        let name = data[id].name
-
-        var check = confirm("確認刪除接駁車" + name + "?")
-        if (check) {
-
-            $.post("api/del.php", { action: "station", id: data[id].id }, function (res) {
+        if (confirm("確認刪除站點"+data[id].name+"?")) {
+            $.post("api/del.php",{id: data[id].id,action: "station"},function () {
                 get()
-                alert("資料已刪除")
             })
         }
     }
     function edit(i) {
-        $(".btn-warning").prop("disabled",true)
-        let tr = $(`button[onclick="edit(${i})"]`).closest("tr");
-        console.log(tr);
+        $(".edit-station-button").prop("disabled",true)
+        let tr = $(`button[data-station="${data[i].name}"]`).closest("tr")
         tr.html(`
-            <td class="station-name" id="station-name">${data[i].name}</td>
-            <td class="station-runtime">
-                <input type="number" class="form-control" name="arriving-time" value="${data[i].need}">
-            </td>
-            <td class="station-runtime">
-                <input type="number" class="form-control" name="staying-time" value="${data[i].stop}">
-            </td>
-            <td>
-                <button class="btn btn-warning edit-station-button" id="edit-button" data-station-name="${data[i].name}" onclick="submit(${i})">修改</button>
-                <button class="btn btn-secondary delete-station-button" data-station-name="${data[i].name}" onclick="back()">回上頁</button>
-            </td>
+        <td class="station-name">${data[i].name}</td>
+        <td class="station-staying-time"><input class="form-control" name="staying-time" value="${data[i].stop}"></td>
+        <td class="station-arriving-time"><input class="form-control" name="arriving-time" value="${data[i].need}"></td>
+        <td>
+            <button class="btn btn-warning edit-station-button" data-station="${data[i].name}" onclick="upload(${i})">修改</button>
+            <button class="btn btn-secondary delete-station-button" data-station="${data[i].name}" onclick="get()">取消</button>
+        </td>
         `)
     }
-    function submit(i) {
-        $(".btn-warning").prop("disabled",false)
-        console.log(i);
-        
-        console.log(data[i]);
-        
-        
-        let formData = {
-            id: data[i].id,
+    function upload(i) {
+        const form = {
             action: "station",
             need: $("input[name='arriving-time']").val(),
             stop: $("input[name='staying-time']").val(),
-            route: route
+            id: data[i].id,
         }
-        if (VailidNumber(formData.need) && VailidNumber(formData.stop)) {
-            $.post("api/edit.php",formData,function () {
-                alert("資料已修改")
-                get()
-            })
+        if (VailidNumber(form.need) && VailidNumber(form.stop)) {
+            $.post("api/edit.php",form,function () {
+            get()
+        })
         } else {
             alert("請輸入正確數值")
         }
     }
-    $("select").on("input",function () {
-        route = $(this).val()
-        console.log(route);
-        get()
-    })
 </script>

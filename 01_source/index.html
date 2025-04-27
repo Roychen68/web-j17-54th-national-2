@@ -23,13 +23,12 @@
             <button class="btn btn-danger" onclick="logout()" id="logout-btn">登出</button>
         </div>
     </header>
-    <div class="card" style="width: 768px;">
-        <select class="form-control">
-            <option disabled selected>請選擇路線</option>
-        </select>
-    </div>
-    <div id="route-map" class="card">
-    </div>
+    <div class="card" style="width: 800px">
+            <select class="form-control w-50 ml-auto mr-auto mt-3" id="route-select">
+                <option disabled selected>請選擇路線</option>
+            </select>
+            <div class="card-body" id="route-map"></div>
+        </div>
     <div class="modal fade" id="login">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -107,7 +106,6 @@
             alert("驗證碼錯誤")
         }
     }
-    get()
     function get() {
         $.post("api/get.php",{ route: route , action: "map"},function (res) {
             let data  =  JSON.parse(res)
@@ -121,7 +119,7 @@
                 map += `
                 <div class="station">
                 <div class="station-status ${data[i].class}">${data[i].bus}</div>
-                <span class="station-point"></span>
+                <span class="station-point" data-rank="${data[i].rank}"></span>
                 <div class="station-name">${data[i].name}</div>
                 </div>`
                 if (i % 3 === 2 || i === data.length - 1) {
@@ -129,6 +127,18 @@
                 }
             }
             $("#route-map").html(map)
+            $(".station-point").hover(function () {
+                    $("#status").remove()
+                let rank = $(this).data("rank")
+                let station = $(this)
+                $.post("api/get.php",{action: "status",rank: rank,route: route},function (res) {
+                    station.after(`
+                    <div class="card card-body -position-absolute" id="status">${res}</div>
+                    `)
+                })
+            },function () {
+                    $("#status").remove()
+            })
         })
     }
 </script>

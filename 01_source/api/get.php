@@ -64,5 +64,17 @@ switch ($action) {
         $route = $pdo->query("SELECT * FROM `route`")->fetchAll();
         echo json_encode($route);
         break;
+    case 'status':
+        $buses = $pdo->query("SELECT * FROM `bus` WHERE `route` = '{$_POST['route']}' LIMIT 3")->fetchAll();
+        $time = $pdo->query("SELECT * FROM `station` WHERE `rank` < '{$_POST['rank']}'")->fetchColumn();
+        foreach ($buses as $bus) {
+            $arrive = $time-$bus['time'];
+            if ($arrive < 0) {
+                echo "<span style='color: grey;'>".$bus['plate']."已過站</span>";
+            } else {
+                echo "<span style='color: red;'>".$bus['plate'].":".$arrive."分鐘後到站</span>";
+            }
+        }
+        break;
 }
 ?>

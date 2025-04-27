@@ -4,7 +4,6 @@ div#route-map{
     padding: 9px;
     z-index: -5;
     margin: auto;
-    transform: translateY(100px);
 }
 div.station {
     width: 250px;
@@ -74,4 +73,12 @@ div.d-flex:nth-child(odd) div.station:nth-of-type(3):after {
 
 div.d-flex:last-of-type div.station:last-of-type:after{
     content: none;
+}
+
+div#status{
+    width: 250px;
+    min-height: 100px;
+    position: absolute;
+    transform: translateY(0);
+    z-index: 90;
 }

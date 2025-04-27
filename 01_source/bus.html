@@ -116,6 +116,7 @@
             action: "bus",
             plate: $("input[name='plate']").val(),
             time: $("input[name='runtime']").val(),
+            route: route
         }
 
         if (VailidNumber(data.time) && VailidValue(data.plate)) {
