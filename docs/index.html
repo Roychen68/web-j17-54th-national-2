@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台北101接駁專車</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="map.css">
+    <link rel="stylesheet" href="bootstrap.css">
+    <style>
+    </style>
+</head>
+
+<body>
+    <header class="shadow" id="navbar">
+        <div class="logo" id="logo">
+            <img src="../01_01/01_LOGO.png" alt="" class="logo">
+            <h1>台北101接駁專車系統</h1>
+        </div>
+        <div class="links">
+            <button class="btn btn-primary" onclick="check()">系統管理</button>
+            <button class="btn btn-danger" onclick="logout()" id="logout-btn">登出</button>
+        </div>
+    </header>
+    <div class="card" style="width: 800px">
+            <select class="form-control w-50 ml-auto mr-auto mt-3" id="route-select">
+                <option disabled selected>請選擇路線</option>
+            </select>
+            <div class="card-body" id="route-map"></div>
+        </div>
+    <div class="modal fade" id="login">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>台北101接駁專車系統-系統管理</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="username">帳號:</label>
+                        <input type="text" class="form-control" name="username" id="username">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">密碼:</label>
+                        <input type="text" class="form-control" name="password" id="password">
+                    </div>
+                    <div class="form-group">
+                        <label for="captcha">驗證碼:<span id="captcha"></span></label>
+                        <input type="text" class="form-control" name="captcha" id="captcha">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-info" id="regenerate-captcha-button" onclick="captcha()">刷新驗證碼</button>
+                    <button class="btn btn-primary" id="login-button" onclick="login()">登入</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+<script src="jquery.js"></script>
+<script src="bootstrap.js"></script>
+<script src="js.js"></script>
+<script>
+    let veri
+    let route
+    captcha()
+    function captcha() {
+        veri = Math.floor(Math.random() * 9999)
+        $("#captcha").text(veri)
+    }
+    $.post("api/get.php", { action: "route" }, function (res) {
+        data = JSON.parse(res)
+        let options
+        for (let i = 0; i < data.length; i++) {
+            options += `
+            <option value="${data[i].name}" ${i == 0? "selected" : ""}>${data[i].name}</option>
+            `
+            $("select").html(options)
+            route = data[0].name
+        }
+        get()
+    })
+    $("select").on("input",function () {
+        route = $(this).val()
+        console.log(route);
+        get()
+    })
+    function login() {
+        let data = {
+            username: $("input#username").val(),
+            password: $("input#password").val(),
+            captcha: $("input#captcha").val(),
+        }
+        if (data.captcha == veri) {
+            $.post("api/login.php", data, function (res) {
+                if (res > 0) {
+                    alert("登入成功")
+                    location.href = "bus.html"
+                } else {
+                    alert("帳號密碼錯誤")
+                }
+            })
+        } else {
+            alert("驗證碼錯誤")
+        }
+    }
+    function get() {
+        $.post("api/get.php",{ route: route , action: "map"},function (res) {
+            let data  =  JSON.parse(res)
+            let map = ""
+            for (let i = 0; i < data.length; i++) {
+                if (i % 3 === 0) {
+                    map += `
+                    <div class="d-flex ${i % 6 === 3 ?  "flex-row-reverse" : ""}">
+                    `
+                }
+                map += `
+                <div class="station">
+                <div class="station-status ${data[i].class}">${data[i].bus}</div>
+                <span class="station-point" data-rank="${data[i].rank}"></span>
+                <div class="station-name">${data[i].name}</div>
+                </div>`
+                if (i % 3 === 2 || i === data.length - 1) {
+                    map += `</div>`
+                }
+            }
+            $("#route-map").html(map)
+            $(".station-point").hover(function () {
+                    $("#status").remove()
+                let rank = $(this).data("rank")
+                let station = $(this)
+                $.post("api/get.php",{action: "status",rank: rank,route: route},function (res) {
+                    station.after(`
+                    <div class="card card-body -position-absolute" id="status">${res}</div>
+                    `)
+                })
+            },function () {
+                    $("#status").remove()
+            })
+        })
+    }
+</script>
