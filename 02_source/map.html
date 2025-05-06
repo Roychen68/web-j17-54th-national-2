@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台北101接駁專車</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="bootstrap.css">
+</head>
+
+<body>
+    <header class="shadow" id="navbar">
+        <div class="logo" id="logo">
+            <img src="../01_01/01_LOGO.png" alt="" class="logo">
+            <h1>台北101接駁專車系統系統</h1>
+        </div>
+        <div class="links">
+            <button class="btn btn-primary" onclick="check()">系統管理</button>
+            <button class="btn btn-danger" onclick="logout()" id="logout-btn">登出</button>
+        </div>
+    </header>
+    <div class="card shadow">
+        <div class="card-body">
+            <a href="map.html" class="btn btn-info active" id="route-link">路線管理</a>
+            <a href="bus.html" class="btn btn-info" id="route-link">接駁車管理</a>
+            <a href="station.html" class="btn btn-info" id="station-link">站點管理</a>
+            <a href="basic.html" class="btn btn-info" id="basic-setting-link">表單管理</a>
+        </div>
+    </div>
+    <div class="card shadow info">
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">路線名稱</th>
+                        <th style="width: 30%;">站點數量</th>
+                        <th style="width: 40%;">操作
+                            <button class="btn btn-success" id="add-route-button" onclick="add()">新增</button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal fade" id="insert">
+        <div class="modal-dialog modal-xl">
+            <form class="modal-content" onsubmit="insert()">
+                <div class="modal-header">
+                    <h1>新增路線</h1>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="">路線名稱</label>
+                        <input type="text" class="form-control" name="route" required>
+                    </div>
+                    <div class="route"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="add-button" type="submit">新增</button>
+                    <button class="btn btn-secondary" id="back-button" onclick="cancel()" type="button">回上頁</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal fade" id="edit">
+        <div class="modal-dialog modal-xl">
+            <form class="modal-content" onsubmit="submit(event)">
+                <div class="modal-header">
+                    <h1>新增路線</h1>
+                </div>
+                <div class="modal-body">
+                    <div class="route"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-warning" id="edit-button" type="submit">編輯</button>
+                    <button class="btn btn-secondary" id="back-button" onclick="cancel()" type="button">回上頁</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
+<script src="jquery.js"></script>
+<script src="bootstrap.js"></script>
+<script src="js.js"></script>
+<script>
+    let editId
+    let data
+    get()
+    function get() {
+        $("tbody").empty()
+        $.post("api/get.php", { action: "route" }, function (res) {
+            data = JSON.parse(res)
+            for (let i = 0; i < data.length; i++) {
+                $("tbody").append(`
+                    <tr>
+                        <td class="route-name">${data[i].name}</td>
+                        <td class="map-station">${data[i].stations}</td>
+                        <td>
+                            <button class="btn btn-warning edit-route-button" data-route-name="${data[i].name}" onclick="edit(${i})">編輯</button>
+                            <button class="btn btn-danger delete-route-button" data-route-name="${data[i].name}" onclick="del(${i})">刪除</button>
+                        </td>
+                    </tr>
+                    `)
+            }
+        })
+    }
+    function add() {
+        $.post("api/get.php", { action: "station" }, function (res) {
+            var data = JSON.parse(res);
+            let stations = "";
+            for (let i = 0; i < data.length; i++) {
+                stations += `
+                <ul class="d-flex align-items-center">
+                    <input type="checkbox" class="station-checkbox" data-id="${i}">
+                    <span class="col-3">${data[i].name}</span>
+                </ul>
+            `;
+            }
+            $("div.route").html(stations);
+
+            $(".station-checkbox").on("click", function () {
+                console.log("click");
+
+                if ($(this).prop("checked") == true) {
+                    $(this).parent().append(`
+                    <div class="form-group col-3 align-items-center d-flex">
+                        <label class="">行駛時間</label>
+                        <input type="number" class="form-control" name="need" min="0" required>
+                    </div>
+                    <div class="form-group col-3 align-items-center d-flex">
+                        <label class="">停留時間</label>
+                        <input type="number" class="form-control" name="stop" min="0" required>
+                    </div>
+                    <div class="form-group col-3 align-items-center d-flex">
+                        <label class="">順序</label>
+                        <input type="number" class="form-control" name="rank" min="0" required>
+                    </div>
+                    `)
+                } else {
+                    $(this).siblings(".form-group").remove()
+                }
+            });
+        });
+        $("div#insert").modal("show");
+    }
+    let valid = true
+    function insert() {
+        let route = $("input[name='route']").val();
+        let stations = [];
+
+        $(".station-checkbox:checked").each(function () {
+            let ul = $(this).closest("ul");
+            let name = ul.find("span").text();
+            let need = ul.find("input[name='need']").val();
+            let stop = ul.find("input[name='stop']").val();
+            let rank = ul.find("input[name='rank']").val();
+
+            if (need && stop && rank) {
+                stations.push({ name, need, stop, rank });
+            }
+        });
+
+        if (stations.length < 2) return alert("每一個路線的站點不得少於兩站");
+
+        $.post("api/add.php", {
+            action: "route",
+            route,
+            stations: JSON.stringify(stations)
+        }, function (res) {
+            alert(res);
+            $("div.modal").modal("hide");
+            get();
+        });
+    }
+
+    function del(id) {
+        console.log(id);
+        console.log(data);
+
+        let route = data[id].name
+
+        var check = confirm("確認刪除路線" + route + "?")
+        if (check) {
+
+            $.post("api/del.php", { action: "route", id: data[id].id, route }, function (res) {
+                get()
+                alert("資料已刪除")
+            })
+        }
+    }
+    function edit(id) {
+        editId = id
+        let route = data[id].name
+        $.post("api/get.php", { action: "station" }, function (res) {
+            $("div#edit div.modal-header").html(`<h3>修改路線${route}</h3>`)
+            var data = JSON.parse(res);
+            let stations = "";
+            for (let i = 0; i < data.length; i++) {
+                stations += `
+                <ul class="d-flex align-items-center">
+                    <input type="checkbox" class="station-checkbox" data-id="${i}">
+                    <span class="col-3">${data[i].name}</span>
+                </ul>
+            `;
+            }
+            $("div.route").html(stations);
+
+            $(".station-checkbox").on("click", function () {
+                console.log("click");
+
+                if ($(this).prop("checked") == true) {
+                    $(this).parent().append(`
+                    <div class="form-group col-3 align-items-center d-flex">
+                        <label class="">行駛時間</label>
+                        <input type="number" class="form-control" name="need" min="0" required>
+                    </div>
+                    <div class="form-group col-3 align-items-center d-flex">
+                        <label class="">停留時間</label>
+                        <input type="number" class="form-control" name="stop" min="0" required>
+                    </div>
+                    <div class="form-group col-3 align-items-center d-flex">
+                        <label class="">順序</label>
+                        <input type="number" class="form-control" name="rank" min="0" required>
+                    </div>
+                    `)
+                } else {
+                    $(this).siblings(".form-group").remove()
+                }
+            });
+        });
+        $("div#edit").modal("show");
+    }
+    function submit(event) {
+        event.preventDefault();
+        let route = data[editId].name;
+        
+        let stations = [];
+
+        $(".station-checkbox:checked").each(function () {
+            let ul = $(this).closest("ul");
+            let name = ul.find("span").text();
+            let need = ul.find("input[name='need']").val();
+            let stop = ul.find("input[name='stop']").val();
+            let rank = ul.find("input[name='rank']").val();
+
+            if (need && stop && rank) {
+                stations.push({ name, need, stop, rank });
+            }
+        });
+
+        if (stations.length < 2) return alert("每一個路線的站點不得少於兩站");
+
+        $.post("api/edit.php", {
+            action: "route",
+            route,
+            stations: JSON.stringify(stations)
+        }, function (res) {
+            alert(res);
+            $("div.modal").modal("hide");
+            // get();
+        });
+    }
+</script>

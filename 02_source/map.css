@@ -1,0 +1,84 @@
+div#route-map{
+    background: #fff;
+    width: 768px;
+    padding: 9px;
+    z-index: -5;
+    margin: auto;
+}
+div.station {
+    width: 250px;
+    height: 100px;
+    text-align: center;
+    position: relative;
+}
+
+span.station-point {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background: #22d3ee;
+    outline: #22d3ee 2px solid;
+    border: 2px solid #fff;
+    border-radius: 100%;
+    position: relative;
+    z-index: 1;
+    transform: translateY(5px);
+}
+div.station::before {
+    content: "";
+    width: 250px;
+    height: 5px;
+    background: #22d3ee;
+    position: absolute;
+    top: 36px;
+    left: 0;
+    z-index: -1;
+    transform:  translateY(30px);
+}
+div.d-flex:first-of-type div.station:first-of-type::before {
+    content: "";
+    width: 125px;
+    height: 5px;
+    top: 36px;
+    z-index: -1;
+    transform: translateX(100%) translateY(30px);
+}
+div.d-flex:last-of-type:nth-child(odd) div.station:last-of-type::before {
+    width: 125px;
+}
+div.d-flex:last-of-type:nth-child(even) div.station:last-of-type::before {
+    width: 125px;
+    transform: translateX(100%) translateY(30px);
+}
+div.d-flex:nth-child(even) div.station:nth-of-type(3):after {
+    content: "";
+    width: 5px;
+    height: 100px;
+    position: absolute;
+    background: #22d3ee;
+    top: 0;
+    left: 0;
+    transform: translateY(36px) translateY(30px);
+}
+div.d-flex:nth-child(odd) div.station:nth-of-type(3):after {
+    content: "";
+    width: 5px;
+    height: 100px;
+    position: absolute;
+    background: #22d3ee;
+    top: 0;
+    right: 0;
+    transform: translateY(36px) translateY(30px);
+}
+
+div.d-flex:last-of-type div.station:last-of-type:after{
+    content: none;
+}
+
+div#status{
+    width: 250px;
+    min-height: 100px;
+    position: absolute;
+    transform: translateY(0);
+    z-index: 90;
+}

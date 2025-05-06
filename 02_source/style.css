@@ -1,0 +1,61 @@
+header{
+    width: 100%;
+    height: 100px;
+    display: flex !important;
+    background: white;
+    flex-direction: row;
+    justify-content: space-between;
+}
+div.logo{
+    line-height: 100px;
+    display: flex;
+    cursor: pointer;
+}
+body{
+    font-family: Arial, Helvetica, sans-serif !important;
+    background: #edf7fe !important;
+}
+img.logo{
+    height: 100px;
+}
+header h1{
+    line-height: 100px;
+}
+div.card{
+    width: 80%;
+    max-height: 70%;
+    transform: translateY(100px);
+    margin: auto;
+}
+div.links{
+    line-height: 100px;
+    transform: translate(-150px);
+}
+div.info{
+    transform: translateY(130px);
+    padding: 20px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+div.modal-header{
+    text-align: center;
+}
+div.custom-switch{
+    scale: 1.2;
+    display: inline-block;
+    transform: translateX(10px);
+}
+span.count-badge{
+    display: inline-block;
+    border-radius: 100%;
+    width: 20px;
+    height: 20px;
+    background: red;
+    text-align: center;
+    line-height: 20px;
+    color: white;
+}
+div.modal div.modal-body{
+    overflow-y: auto;
+    max-height: 400px;
+}

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台北101接駁專車</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="bootstrap.css">
+</head>
+
+<body>
+    <header class="shadow" id="navbar">
+        <div class="logo" id="logo">
+            <img src="../01_01/01_LOGO.png" alt="" class="logo">
+            <h1>台北101接駁專車系統系統</h1>
+        </div>
+        <div class="links">
+            <button class="btn btn-primary" onclick="check()">系統管理</button>
+            <button class="btn btn-danger" onclick="logout()" id="logout-btn">登出</button>
+        </div>
+    </header>
+    <div class="card shadow">
+        <div class="card-body">
+            <a href="map.html" class="btn btn-info" id="route-link">路線管理</a>
+            <a href="bus.html" class="btn btn-info" id="bus-link">接駁車管理</a>
+            <a href="station.html" class="btn btn-info" id="station-link">站點管理</a>
+            <a href="basic.html" class="btn btn-info active" id="basic-setting-link">表單管理</a>
+        </div>
+    </div>
+    <div class="card shadow info d-flex flex-row">
+        <div class="card-body w-25">
+            <a href="basic.html" id="basic-setting-link" class="btn btn-outline-dark w-100 mb-3 active">基本設定</a>
+            <a href="participants.html" id="participants-setting-link" class="btn btn-outline-dark w-100 mb-3">參與者設定</a>
+            <a href="response.html" id="response-setting-link" class="btn btn-outline-dark w-100 mb-3">檢視回應</a>
+            <a href="dispatch.html" id="dispatch-setting-link" class="btn btn-outline-dark w-100 mb-3">統計資料</a>
+        </div>
+        <div class="card-body w-75">
+            <h1>基本設定</h1>
+            <div class="custom-switch custom-control mb-3">
+                <input type="checkbox" name="enable" id="enable" class="custom-control-input">
+                <label for="enable" class="custom-control-label">啟用表單</label>
+            </div><br>
+            <input type="datetime-local" name="start-at" id="start-at" class="form-control mb-3">
+            <input type="datetime-local" name="end-at" id="end-at" class="form-control mb-3">
+            <button class="btn btn-primary" id="save-button" onclick="save()">儲存</button>
+        </div>
+    </div>
+</body>
+
+</html>
+<script src="jquery.js"></script>
+<script src="bootstrap.js"></script>
+<script src="js.js"></script>
+<script>
+    get()
+    function get() {
+        $.post("api/get.php",{action: "form"},function (formRes) {
+            let form
+            $.post("api/get.php",{action: "basic"},function (res) {
+                form = parseInt(formRes)
+                let data = JSON.parse(res)
+                let now = new Date
+                for (let i = 0; i < data.length; i++) {
+                    const start = data[i].start
+                    const end = data[i].end
+                    console.log(start,end);
+                    
+                    $("input#start-at").val(start)
+                    $("input#end-at").val(end)
+                    if (start <= now && now <= end || form == 1) {
+                        $("#enable").prop("checked",true)
+                    } else {
+                        $("#enable").prop("checked",false)
+                    }
+                }
+            })
+        })
+    }
+    function save() {
+        const form = {
+            now: new Date().toISOString(),
+            start: $("input#start-at").val(),
+            end: $("input#end-at").val(),
+            action: "basic"
+        }
+        $.post("api/edit.php",form,function () {
+            get()
+        })
+    }
+    $("#enable").change(function () {
+        const form = {
+            action: "form",
+            form: $("#enable").prop("checked"),
+        }
+        $.post("api/edit.php",form,function () {
+        })
+    })
+</script>
