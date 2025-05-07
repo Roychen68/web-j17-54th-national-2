@@ -66,15 +66,25 @@ switch ($action) {
         break;
     case 'status':
         $buses = $pdo->query("SELECT * FROM `bus` WHERE `route` = '{$_POST['route']}' LIMIT 3")->fetchAll();
-        $time = $pdo->query("SELECT * FROM `route-station` WHERE `rank` < '{$_POST['rank']}' AND `route` = '{$_POST['route']}'")->fetchColumn();
-        foreach ($buses as $bus) {
-            $arrive = $time-$bus['time'];
-            if ($arrive < 0) {
-                echo "<span style='color: grey;'>".$bus['plate']."已過站</span>";
-            } else {
-                echo "<span style='color: red;'>".$bus['plate'].":".$arrive."分鐘後到站</span>";
+        $time = $pdo->query("SELECT SUM(`need` + `stop`) FROM `route-station` WHERE `rank` < '{$_POST['rank']}' AND `route` = '{$_POST['route']}'")->fetchColumn();
+        $station = $pdo->query("SELECT `need` , `stop` FROM `route-station` WHERE `rank` = '{$_POST['rank']}' AND `route` = '{$_POST['route']}'")->fetch(PDO::FETCH_ASSOC);
+        $arrive = $time + $station['need'];
+        $leave = $arrive + $station['stop'];
+
+        if (!$buses) {
+                echo "<span style='color: grey;'>尚未產生接駁車</span>";
+        } else {
+            foreach ($buses as $bus) {
+                if ($bus['time'] < $arrive) {
+                    echo "<span style='color: red;'>".$bus['plate'].":".$arrive - $bus['time']."分鐘後到站</span>";
+                } elseif ($bus['time'] >= $arrive && $bus['time'] <= $leave) {
+                    echo "<span style='color: red;'>".$bus['plate']."已到站</span>";
+                } else {
+                    echo "<span style='color: grey;'>".$bus['plate']."已過站</span>";
+                }
             }
         }
+        
         break;
 }
 ?>

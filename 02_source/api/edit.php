@@ -21,11 +21,11 @@ switch ($action) {
         
         break;
     case 'route':
-        $pdo->query("DELETE FROM `route-station` WHERE `route` = '{$_POST['route']}'")
+        $pdo->query("DELETE FROM `route-station` WHERE `route` = '{$_POST['route']}'");
         $pdo->query("INSERT INTO `route` (`name`) VALUES ('{$_POST['route']}')");
         $route = $_POST['route'];
         $stations = json_decode($_POST['stations'], true);
-
+        
         foreach ($stations as $station) {
             $name = $station['name'];
             $rank = $station['rank'];
@@ -34,5 +34,6 @@ switch ($action) {
             $pdo->query("INSERT INTO `route-station` (`station`, `rank`, `need`, `stop`, `route`) VALUES ('$name','$rank','$need','$stop','$route')");
         }
         break;
+        echo "新增成功";
 }
 ?>

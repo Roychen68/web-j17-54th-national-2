@@ -30,14 +30,12 @@
     </div>
     <div class="card shadow info">
         <div class="card-body">
-            <select id="" class="form-control">
-                <option disabled selected>請選擇路線</option>
-            </select>
             <table class="table">
                 <thead>
                     <tr>
+                        <th style="width: 20%;">路線</th>
                         <th style="width: 30%;">車牌</th>
-                        <th style="width: 30%;">已行駛時間(分鐘)</th>
+                        <th style="width: 20%;">已行駛時間(分鐘)</th>
                         <th style="width: 40%;">操作
                             <button class="btn btn-success" id="add-bus-button"
                                 onclick="$('#insert').modal('show')">新增</button>
@@ -56,6 +54,9 @@
                     <h1>新增接駁車</h1>
                 </div>
                 <div class="modal-body">
+                    <select id="" class="form-control">
+                        <option disabled selected>請選擇路線</option>
+                    </select>
                     <div class="form-group">
                         <label for="">車牌</label>
                         <input type="text" class="form-control" name="plate">
@@ -91,15 +92,16 @@
             $("select").html(options)
             route = data[0].name
         }
-        get()
     })
+    get()
     function get() {
         $("tbody").empty()
-        $.post("api/get.php", { route: route, action: "bus" }, function (res) {
+        $.post("api/get.php", { action: "bus" }, function (res) {
             data = JSON.parse(res)
             for (let i = 0; i < data.length; i++) {
                 $("tbody").append(`
                 <tr>
+                    <td class="bus-route">${data[i].route}</td>
                     <td class="bus-plate">${data[i].plate}</td>
                     <td class="bus-runtime">${data[i].time}</td>
                     <td>
@@ -147,6 +149,7 @@
         let tr = $(`button[onclick="edit(${i})"]`).closest("tr");
         console.log(tr);
         tr.html(`
+            <td class="bus-route">${data[i].route}</td>
             <td class="bus-plate" id="bus-plate">${data[i].plate}</td>
             <td class="bus-runtime">
                 <input type="number" class="form-control" name="runtime" value="${data[i].time}">
@@ -181,6 +184,5 @@
     $("select").on("input",function () {
         route = $(this).val()
         console.log(route);
-        get()
     })
 </script>

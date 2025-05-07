@@ -67,7 +67,7 @@
     </div>
     <div class="modal fade" id="edit">
         <div class="modal-dialog modal-xl">
-            <form class="modal-content" onsubmit="submit(event)">
+            <form class="modal-content" onsubmit="change(event)">
                 <div class="modal-header">
                     <h1>新增路線</h1>
                 </div>
@@ -235,7 +235,7 @@
         });
         $("div#edit").modal("show");
     }
-    function submit(event) {
+    function change(event) {
         event.preventDefault();
         let route = data[editId].name;
         
