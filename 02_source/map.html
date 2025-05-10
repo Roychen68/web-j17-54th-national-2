@@ -123,7 +123,7 @@
             }
             $("div.route").html(stations);
 
-            $(".station-checkbox").on("click", function () {
+            $(".station-checkbox").click(function () {
                 console.log("click");
 
                 if ($(this).prop("checked") == true) {
@@ -235,8 +235,7 @@
         });
         $("div#edit").modal("show");
     }
-    function change(event) {
-        event.preventDefault();
+    function change() {
         let route = data[editId].name;
         
         let stations = [];
